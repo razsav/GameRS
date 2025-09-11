@@ -74,10 +74,19 @@ public class ScenePanel extends JPanel {
                 repaint();
 
                 // תנועת החוואי
-                if (movementListener.isRight()) this.getFarmer().moveRight();
-                if (movementListener.isLeft()) this.getFarmer().moveLeft();
-                if (movementListener.isUp()) this.getFarmer().moveUp();
-                if (movementListener.isDown()) this.getFarmer().moveDown();
+                if (movementListener.isRight()) {
+                    this.getFarmer().moveRight();
+                }
+                if (movementListener.isLeft()) {
+                    this.getFarmer().moveLeft();
+                }
+                if (movementListener.isUp()) {
+                    this.getFarmer().moveUp();
+                }
+                if (movementListener.isDown()) {
+                    this.getFarmer().moveDown();
+                }
+
 
                 try {
                     Thread.sleep(100);
