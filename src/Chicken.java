@@ -16,9 +16,36 @@ public class Chicken {
     }
 
     public void paint (Graphics graphics) {
-        graphics.setColor(Color.YELLOW);
+        graphics.setColor(Color.WHITE);
         graphics.fillOval(this.x, this.y, SIZE/2, SIZE);
+        drawTriangle(graphics, this.x+5, this.y-5,SIZE/6, Color.RED, Color.RED);
+        drawTriangle(graphics, this.x+10, this.y-5,SIZE/6, Color.RED, Color.RED);
+        drawTriangle(graphics, this.x+15, this.y-5,SIZE/6, Color.RED, Color.RED);
+        drawTriangle(graphics, this.x-2, this.y+6,SIZE/6, Color.YELLOW, Color.YELLOW);
     }
+
+    public void drawTriangle(Graphics g, int x, int y, int size, Color color, Color color2) {
+        Graphics2D g2 = (Graphics2D) g;
+
+        // קואורדינטות של שלושת הקודקודים
+        int[] xPoints = {
+                x,               // הקודקוד העליון
+                x - size / 2,    // שמאל למטה
+                x + size / 2     // ימין למטה
+        };
+        int[] yPoints = {
+                y,               // הקודקוד העליון
+                y + size,        // שמאל למטה
+                y + size         // ימין למטה
+        };
+
+        g2.setColor(color);
+        g2.fillPolygon(xPoints, yPoints, 3); // צובע את המשולש
+
+        g2.setColor(color2);
+        g2.drawPolygon(xPoints, yPoints, 3); // מצייר קווי מתאר
+    }
+
 
     public void move (int width, int height){
         int oldX = this.x;
