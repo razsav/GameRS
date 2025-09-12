@@ -5,6 +5,7 @@ public class Farmer {
     private int x, y;
     private ScenePanel scenePanel;
     private boolean alive;
+    private int speed = 5;
 
     public Farmer(ScenePanel scenePanel) {
         this.x=scenePanel.getWidth() / 2;
@@ -56,27 +57,31 @@ public class Farmer {
     public void die () {
         this.alive = false;
     }
+    public void Alive () {this.alive = true;}
+    public boolean isAlive() {
+        return alive;
+    }
 
     public void moveRight () {
         if (this.x < this.scenePanel.getWidth() - SIZE) {
-            this.x++;
+            this.x+=this.speed;
         }
     }
 
     public void moveLeft () {
         if (this.x > 0) {
-            this.x--;
+            this.x-=this.speed;
         }
     }
 
     public void moveUp () {
         if (this.y > 0) {
-            this.y--;
+            this.y-=this.speed;
         }
     }
 
     public void moveDown () {
-        this.y++;
+        this.y+=this.speed;
     }
 
     public int getX() {
@@ -91,9 +96,6 @@ public class Farmer {
         this.y = y;
     }
 
-    public boolean isAlive() {
-        return alive;
-    }
 
     public Rectangle getBounds() {
         return new Rectangle(x, y, SIZE, SIZE);

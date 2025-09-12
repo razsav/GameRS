@@ -11,6 +11,7 @@ public class ScenePanel extends JPanel {
     private Chicken chicken;
     private Chicken[] chickens;
     private ArrayList<Egg> eggs = new ArrayList<Egg>();
+    private BlackChicken blackChicken;
     Random random = new Random();
     int x;
     int y;
@@ -33,6 +34,7 @@ public class ScenePanel extends JPanel {
         this.setLayout(null);
         this.setBackground(Color.GREEN);
         this.chickens = new Chicken[chickensAmount];
+        this.blackChicken = new BlackChicken(random.nextInt(width-blackChicken.SIZE/2), random.nextInt(height-blackChicken.SIZE));
 
 
         for (int i=0; i< this.chickens.length; i++){
@@ -61,13 +63,14 @@ public class ScenePanel extends JPanel {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            this.setFocusable(true);
-            this.requestFocus();
+//            this.setFocusable(true);
+//            this.requestFocus();
 
-            while (true) {
+            while (this.farmer.isAlive()) {
                 for (Chicken chicken : this.chickens) {
                     chicken.move(width, height);
                 }
+                this.blackChicken.move(width, height);
 
                 this.checkCollisions();
                 this.checkEggsExpiration();
@@ -114,6 +117,9 @@ public class ScenePanel extends JPanel {
 
             }
         }
+        if (blackChicken.getBounds().intersects(getFarmer().getBounds())){
+            this.farmer.die();
+        }
     }
 
     public void paintComponent ( Graphics graphics) {
@@ -128,9 +134,8 @@ public class ScenePanel extends JPanel {
             graphics.drawString(secondsLeft + "s", egg.getX(), egg.getY() - 5);
         }
 
-
-
         this.farmer.paint(graphics);
+        this.blackChicken.paint(graphics);
 
         graphics.setColor(Color.WHITE); // בחר צבע מתאים לטקסט
         graphics.setFont(new Font("Arial", Font.BOLD, 20)); // הגדר גופן וגודל
@@ -138,6 +143,13 @@ public class ScenePanel extends JPanel {
         graphics.drawString(scoreText, 10, 20); // צייר את הטקסט במיקום (x, y) מסוים
         graphics.drawString("Broken Eggs: " + brokenEggs + "/5", 10, 50); // מופיע מתחת לסופר
 
+        if(!this.farmer.isAlive()){
+            graphics.setColor(Color.RED);
+            graphics.setFont(new Font("Arial", Font.BOLD, 40));
+            String gameOver = "Game Over";
+            graphics.drawString(gameOver, width/4, height/2);
+
+        }
     }
 
     public Chicken getChicken(){
