@@ -66,22 +66,19 @@ public class ScenePanel extends JPanel {
 
         this.chickens = new Chicken[5];
         for (int i = 0; i < this.chickens.length; i++) {
-            this.chickens[i] = new Chicken(
-                    random.nextInt(width - Chicken.SIZE),
-                    random.nextInt(height - Chicken.SIZE)
-            );
+            int maxX = Math.max(1, width - Chicken.SIZE);
+            int maxY = Math.max(1, height - Chicken.SIZE);
+            this.chickens[i] = new Chicken(random.nextInt(maxX), random.nextInt(maxY));
         }
 
-        this.blackChicken = new BlackChicken(
-                random.nextInt(width - BlackChicken.SIZE),
-                random.nextInt(height - BlackChicken.SIZE)
-        );
+        int maxBlackX = Math.max(1, width - BlackChicken.SIZE);
+        int maxBlackY = Math.max(1, height - BlackChicken.SIZE);
+        this.blackChicken = new BlackChicken(random.nextInt(maxBlackX), random.nextInt(maxBlackY));
 
         this.eggs.clear();
-        this.eggs.add(new Egg(
-                random.nextInt(width - Egg.SIZE),
-                random.nextInt(height - Egg.SIZE)
-        ));
+        int maxEggX = Math.max(1, width - Egg.SIZE);
+        int maxEggY = Math.max(1, height - Egg.SIZE);
+        this.eggs.add(new Egg(random.nextInt(maxEggX), random.nextInt(maxEggY)));
 
         this.eggsColected = 0;
         this.brokenEggs = 0;
@@ -261,8 +258,8 @@ public class ScenePanel extends JPanel {
                 eggs.remove(i);
 
                 // יצירת ביצה חדשה
-                int newX = random.nextInt(Math.max(1, width - Egg.SIZE));
-                int newY = random.nextInt(Math.max(1, height - Egg.SIZE));
+                int newX = random.nextInt(width - Egg.SIZE + 1);
+                int newY = random.nextInt(height - Egg.SIZE + 1);
                 eggs.add(new Egg(newX, newY));
 
                 i--; // כדי לא לפספס בדיקה
