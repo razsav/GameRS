@@ -7,6 +7,8 @@ public class MenuPanel extends JPanel {
     private ScenePanel scenePanel;
     int x, y, width, height, windowWidth, windowHeight;
     MovementListener movementListener;
+    private JLabel counterEggs;
+    private JLabel counterBrokenEggs;
 
     public MenuPanel (int x, int y, int width, int height, int windowWidth, int windowHeight, ActionListener instructionsListener) {
         this.setBounds(x, y, width, height);
@@ -21,7 +23,7 @@ public class MenuPanel extends JPanel {
 
 
         JPanel internalMainMenuPanel = new JPanel();
-        GridLayout gridLayout = new GridLayout(6, 1); //מסדר את החלקוה לכפתורים ואיך יהיו מסודרים
+        GridLayout gridLayout = new GridLayout(9, 1); //מסדר את החלקוה לכפתורים ואיך יהיו מסודרים
         internalMainMenuPanel.setLayout(gridLayout);
         internalMainMenuPanel.setBounds(0,0, width, height/4);
 
@@ -31,7 +33,8 @@ public class MenuPanel extends JPanel {
                         this.windowWidth-this.width,
                         this.height,
                         null,
-                        false);
+                        false,this
+        );
 
         // עכשיו ליצור MovementListener *עם* ה־ScenePanel
         this.movementListener = new MovementListener(this.scenePanel);
@@ -67,6 +70,16 @@ public class MenuPanel extends JPanel {
         internalMainMenuPanel.add(restartButton);
         internalMainMenuPanel.add(instructionButton);
 
+        counterEggs = new JLabel("Eggs: 0");
+        counterEggs.setFont(new Font("Arial", Font.BOLD, 10));
+        counterEggs.setForeground(Color.BLACK);
+        internalMainMenuPanel.add(counterEggs);
+
+        counterBrokenEggs = new JLabel("Broken Eggs: 0/5");
+        counterBrokenEggs.setFont(new Font("Arial", Font.BOLD, 10));
+        counterBrokenEggs.setForeground(Color.BLACK);
+        internalMainMenuPanel.add(counterBrokenEggs);
+
 
         JPanel movementPanel = new JPanel();
         movementPanel.setBounds(0,height/4, width, height/4);
@@ -91,6 +104,15 @@ public class MenuPanel extends JPanel {
 
     public ScenePanel getScenePanel(){
         return this.scenePanel;
+    }
+
+    // שיטה לעדכון הטקסט
+    public void updateCounterEggs(int eggsCollected) {
+        this.counterEggs.setText("Eggs: " + eggsCollected);
+    }
+
+    public void updateCounterBrokenEggs(int BrokenEggs, int brokenEggsThreshold) {
+        this.counterBrokenEggs.setText("Broken Eggs: " + BrokenEggs + "/" + brokenEggsThreshold);
     }
 
 

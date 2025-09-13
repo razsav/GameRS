@@ -18,15 +18,18 @@ public class ScenePanel extends JPanel {
     private MovementListener movementListener;
     private int eggsColected=0;
     private int brokenEggs = 0;
+    private int brokenEggsThreshold=5;
     private int eggCollectedDeatenation = 5;
     private boolean play= false;
     private boolean stop = false;
     private boolean puse = false;
+    private MenuPanel menuPanel;
 
 
 
 
-    public ScenePanel(int x, int y, int width, int height, MovementListener listener, boolean play){
+    public ScenePanel(int x, int y, int width, int height, MovementListener listener, boolean play, MenuPanel menuPanel){
+        this.menuPanel = menuPanel;
         this.play=play;
         this.setBounds(x, y, width, height);
         this.width = width;
@@ -42,11 +45,11 @@ public class ScenePanel extends JPanel {
 
     }
     public void puseGame(){
-        this.puse= true;
+        this.puse = true;
     }
 
     public void continueGame(){
-        this.puse=false;
+        this.puse = false;
     }
 
     public void stopGame(){
@@ -121,6 +124,7 @@ public class ScenePanel extends JPanel {
                     }
                     this.blackChicken.move(width, height);
 
+                    this.checkBrokenEggsThreshold();
                     this.checkCollisions();
                     this.checkEggsExpiration();
 
@@ -155,12 +159,19 @@ public class ScenePanel extends JPanel {
 
     }
 
+    public void checkBrokenEggsThreshold(){
+        if (this.brokenEggs >= this.brokenEggsThreshold){
+            this.farmer.die();
+        }
+    }
+
 
     private void checkCollisions(){
         for (int i=0; i< eggs.size(); i++){
             Egg egg = eggs.get(i);
             if (egg.getBounds().intersects(getFarmer().getBounds())){
                 eggsColected++;
+                SwingUtilities.invokeLater(() -> menuPanel.updateCounterEggs(eggsColected));
                 eggs.remove(i);
                 int newX = random.nextInt(Math.max(Egg.SIZE*16, width - Egg.SIZE*8));
                 int newY = random.nextInt(Math.max(Egg.SIZE*16, height - Egg.SIZE*8));
@@ -209,11 +220,11 @@ public class ScenePanel extends JPanel {
             this.farmer.paint(graphics);
             this.blackChicken.paint(graphics);
 
-            graphics.setColor(Color.WHITE); // בחר צבע מתאים לטקסט
-            graphics.setFont(new Font("Arial", Font.BOLD, 20)); // הגדר גופן וגודל
-            String scoreText = "Eggs: " + this.eggsColected + "/"+ eggCollectedDeatenation; // צור את המחרוזת
-            graphics.drawString(scoreText, 10, 20); // צייר את הטקסט במיקום (x, y) מסוים
-            graphics.drawString("Broken Eggs: " + brokenEggs + "/5", 10, 50); // מופיע מתחת לסופר
+//            graphics.setColor(Color.WHITE); // בחר צבע מתאים לטקסט
+//            graphics.setFont(new Font("Arial", Font.BOLD, 20)); // הגדר גופן וגודל
+//            String scoreText = "Eggs: " + this.eggsColected + "/"+ eggCollectedDeatenation; // צור את המחרוזת
+//            graphics.drawString(scoreText, 10, 20); // צייר את הטקסט במיקום (x, y) מסוים
+//            graphics.drawString("Broken Eggs: " + brokenEggs + "/" + brokenEggsThreshold, 10, 50); // מופיע מתחת לסופר
 
         } else {
             graphics.setColor(Color.RED);
@@ -246,6 +257,7 @@ public class ScenePanel extends JPanel {
             Egg egg = eggs.get(i);
             if (egg.isExpired()) {
                 brokenEggs++;
+                SwingUtilities.invokeLater(() -> menuPanel.updateCounterBrokenEggs(this.brokenEggs, this.brokenEggsThreshold));
                 eggs.remove(i);
 
                 // יצירת ביצה חדשה
