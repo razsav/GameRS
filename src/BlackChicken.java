@@ -60,7 +60,7 @@ public class BlackChicken {
             case 6: this.x--; break; // West
             case 7: this.y--; this.x--; break; // NW
         }
-        if (this.x < 0 || this.y < 0 || this.x > width - SIZE || this.y > height - SIZE) {
+        if (this.x < 0 || this.y < 0 || this.x > width - SIZE*2 || this.y > height - SIZE*2) {
             this.x = oldX;
             this.y = oldY;
             this.direction = new Random().nextInt(8);

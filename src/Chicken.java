@@ -61,7 +61,7 @@ public class Chicken {
             case 6: this.x--; break; // West
             case 7: this.y--; this.x--; break; // NW
         }
-        if (this.x < 0 || this.y < 0 || this.x > width - SIZE || this.y > height - SIZE) {
+        if (this.x < 0 || this.y < 0 || this.x > width - SIZE*2 || this.y > height - SIZE*2) {
             this.x = oldX;
             this.y = oldY;
             this.direction = new Random().nextInt(8);
@@ -86,47 +86,47 @@ public class Chicken {
 
 
 
-    public void chickenStartMoving(int random){
+//    public void chickenStartMoving(int random){
+//
+//        switch (random){
+//            case 0://North
+//                this.y--;
+//                break;
+//            case 1://North-East
+//                this.y--;
+//                this.x++;
+//                break;
+//            case 2://East
+//                this.x++;
+//                break;
+//            case 3://South-East
+//                this.y++;
+//                this.x++;
+//                break;
+//            case 4://South
+//                this.y++;
+//                break;
+//            case 5://South-West
+//                this.y++;
+//                this.x--;
+//                break;
+//            case 6://West
+//                this.x--;
+//                break;
+//            case 7://North-West
+//                this.y--;
+//                this.x--;
+//                break;
+//        }
+//
+//    }
 
-        switch (random){
-            case 0://North
-                this.y--;
-                break;
-            case 1://North-East
-                this.y--;
-                this.x++;
-                break;
-            case 2://East
-                this.x++;
-                break;
-            case 3://South-East
-                this.y++;
-                this.x++;
-                break;
-            case 4://South
-                this.y++;
-                break;
-            case 5://South-West
-                this.y++;
-                this.x--;
-                break;
-            case 6://West
-                this.x--;
-                break;
-            case 7://North-West
-                this.y--;
-                this.x--;
-                break;
-        }
-
-    }
-
-    public boolean checkIfCanMove (int width, int height){
-        if(this.y > 0 && this.x > 0 && this.x < width && this.y < height){
-            return true;
-        }
-        return false;
-    }
+//    public boolean checkIfCanMove (int width, int height){
+//        if(this.y > 0 && this.x > 0 && this.x < width && this.y < height){
+//            return true;
+//        }
+//        return false;
+//    }
 
 //    public void chickenMove(int random, int width, int height){
 //

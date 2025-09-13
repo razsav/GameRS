@@ -8,65 +8,114 @@ import java.util.Random;
 
 public class ScenePanel extends JPanel {
 
-    private Chicken chicken;
     private Chicken[] chickens;
     private ArrayList<Egg> eggs = new ArrayList<Egg>();
     private BlackChicken blackChicken;
-    Random random = new Random();
-    int x;
-    int y;
-    int width;
-    int height;
-    private boolean stop;
+    private Random random = new Random();
+    private int width, height;
+    private boolean stop = false;
     private Farmer farmer;
     private MovementListener movementListener;
     private int eggsColected=0;
     private int brokenEggs = 0;
     private int eggCollectedDeatenation = 5;
+    private boolean play= false;
 
 
 
 
-    public ScenePanel(int x, int y, int width, int height, int chickensAmount, MovementListener listener){
+    public ScenePanel(int x, int y, int width, int height, MovementListener listener, boolean play){
+        this.play=play;
         this.setBounds(x, y, width, height);
         this.width = width;
         this.height = height;
         this.setLayout(null);
         this.setBackground(Color.GREEN);
-        this.chickens = new Chicken[chickensAmount];
+        this.chickens = new Chicken[5];
         this.blackChicken = new BlackChicken(random.nextInt(width-blackChicken.SIZE/2), random.nextInt(height-blackChicken.SIZE));
 
+        if (play ){
+            startNewGame();
+        }
+//        this.farmer = new Farmer(this);
 
-        for (int i=0; i< this.chickens.length; i++){
-            this.chickens[i] = new Chicken(random.nextInt(width-chicken.SIZE/2), random.nextInt(height-chicken.SIZE));
+//        if (this.farmer.isAlive() && play == true){
+//            for (int i=0; i< this.chickens.length; i++){
+//                this.chickens[i] = new Chicken(random.nextInt(width-chicken.SIZE/2), random.nextInt(height-chicken.SIZE));
+//            }
+//
+//
+//            this.eggs.add(new Egg(random.nextInt(width-Egg.SIZE/2), random.nextInt(height-Egg.SIZE)));
+////        for (int i=0; i< this.chickens.length; i++){
+////            this.eggs.add(new Egg(random.nextInt(width-Egg.SIZE/2), random.nextInt(height-Egg.SIZE)));
+////        }
+//
+//            this.farmer = new Farmer(this);
+//
+//
+//            this.stop = false;
+//            this.movementListener = listener;
+//            this.mainGameLoop();
+//        }
+    }
+
+    public void startNewGame (){
+        this.play = true;
+        this.stop = false;
+
+        this.farmer= new Farmer(this);
+        this.farmer.Alive();
+
+        this.chickens = new Chicken[5];
+        for (int i = 0; i < this.chickens.length; i++) {
+            this.chickens[i] = new Chicken(
+                    random.nextInt(width - Chicken.SIZE),
+                    random.nextInt(height - Chicken.SIZE)
+            );
         }
 
+        this.blackChicken = new BlackChicken(
+                random.nextInt(width - BlackChicken.SIZE),
+                random.nextInt(height - BlackChicken.SIZE)
+        );
 
-        this.eggs.add(new Egg(random.nextInt(width-Egg.SIZE/2), random.nextInt(height-Egg.SIZE)));
-//        for (int i=0; i< this.chickens.length; i++){
-//            this.eggs.add(new Egg(random.nextInt(width-Egg.SIZE/2), random.nextInt(height-Egg.SIZE)));
-//        }
+        this.eggs.clear();
+        this.eggs.add(new Egg(
+                random.nextInt(width - Egg.SIZE),
+                random.nextInt(height - Egg.SIZE)
+        ));
 
-        this.farmer = new Farmer(this);
+        this.eggsColected = 0;
+        this.brokenEggs = 0;
 
+        mainGameLoop();
+        repaint();
 
-        this.stop = false;
-        this.movementListener = listener;
-        this.mainGameLoop();
+        this.requestFocusInWindow();
 
     }
 
+    public void setPlay () {
+        startNewGame();
+    }
+
+    private Thread gameThread;
+
     private void mainGameLoop () {
-        new Thread (()-> {
+
+        if (gameThread != null && gameThread.isAlive()) {
+            return; // כבר רץ, לא להפעיל שוב
+        }
+
+        gameThread = new Thread (()-> {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-//            this.setFocusable(true);
-//            this.requestFocus();
 
-            while (this.farmer.isAlive()) {
+
+            while (play && farmer.isAlive()) {
                 for (Chicken chicken : this.chickens) {
                     chicken.move(width, height);
                 }
@@ -94,14 +143,16 @@ public class ScenePanel extends JPanel {
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    break;
                 }
             }
 
 
-        }).start();
+        });
+        gameThread.start();
 
     }
+
 
     private void checkCollisions(){
         for (int i=0; i< eggs.size(); i++){
@@ -109,8 +160,8 @@ public class ScenePanel extends JPanel {
             if (egg.getBounds().intersects(getFarmer().getBounds())){
                 eggsColected++;
                 eggs.remove(i);
-                int newX = random.nextInt(Math.max(1, width - Egg.SIZE));
-                int newY = random.nextInt(Math.max(1, height - Egg.SIZE));
+                int newX = random.nextInt(Math.max(Egg.SIZE*16, width - Egg.SIZE*8));
+                int newY = random.nextInt(Math.max(Egg.SIZE*16, height - Egg.SIZE*8));
                 Egg newEgg = new Egg(newX, newY);
                 eggs.add(newEgg);
                 i=0;
@@ -123,37 +174,42 @@ public class ScenePanel extends JPanel {
     }
 
     public void paintComponent ( Graphics graphics) {
-        super.paintComponent(graphics);
-        for (Chicken chicken: this.chickens){ chicken.paint(graphics); }
-        for (Egg egg : this.eggs){
-            egg.paint(graphics);
 
+        if (!play){
             graphics.setColor(Color.BLACK);
-            graphics.setFont(new Font("Arial", Font.PLAIN, 12));
-            int secondsLeft = egg.getSecondsLeft();
-            graphics.drawString(secondsLeft + "s", egg.getX(), egg.getY() - 5);
-        }
+            graphics.setFont(new Font("Arial", Font.PLAIN, 20));
+            graphics.drawString( "Press 'Play' to start", width/4, height/4);
+            return;
 
-        this.farmer.paint(graphics);
-        this.blackChicken.paint(graphics);
+        } else if (farmer.isAlive()) {
+            super.paintComponent(graphics);
+            for (Chicken chicken: this.chickens){ chicken.paint(graphics); }
+            for (Egg egg : this.eggs){
+                egg.paint(graphics);
 
-        graphics.setColor(Color.WHITE); // בחר צבע מתאים לטקסט
-        graphics.setFont(new Font("Arial", Font.BOLD, 20)); // הגדר גופן וגודל
-        String scoreText = "Eggs: " + this.eggsColected + "/"+ eggCollectedDeatenation; // צור את המחרוזת
-        graphics.drawString(scoreText, 10, 20); // צייר את הטקסט במיקום (x, y) מסוים
-        graphics.drawString("Broken Eggs: " + brokenEggs + "/5", 10, 50); // מופיע מתחת לסופר
+                graphics.setColor(Color.BLACK);
+                graphics.setFont(new Font("Arial", Font.PLAIN, 12));
+                int secondsLeft = egg.getSecondsLeft();
+                graphics.drawString(secondsLeft + "s", egg.getX(), egg.getY() - 5);
+            }
 
-        if(!this.farmer.isAlive()){
+            this.farmer.paint(graphics);
+            this.blackChicken.paint(graphics);
+
+            graphics.setColor(Color.WHITE); // בחר צבע מתאים לטקסט
+            graphics.setFont(new Font("Arial", Font.BOLD, 20)); // הגדר גופן וגודל
+            String scoreText = "Eggs: " + this.eggsColected + "/"+ eggCollectedDeatenation; // צור את המחרוזת
+            graphics.drawString(scoreText, 10, 20); // צייר את הטקסט במיקום (x, y) מסוים
+            graphics.drawString("Broken Eggs: " + brokenEggs + "/5", 10, 50); // מופיע מתחת לסופר
+
+        } else{
             graphics.setColor(Color.RED);
             graphics.setFont(new Font("Arial", Font.BOLD, 40));
-            String gameOver = "Game Over";
-            graphics.drawString(gameOver, width/4, height/2);
+            graphics.drawString("Game Over", width/4, height/2);
+
 
         }
-    }
 
-    public Chicken getChicken(){
-        return chicken;
     }
 
     public Farmer getFarmer () {
@@ -163,6 +219,15 @@ public class ScenePanel extends JPanel {
     public int getEggsColected (){
         return this.eggsColected;
     }
+
+    public int getHeight(){
+        return height;
+    }
+
+    public void setMovementListener(MovementListener listener) {
+        this.movementListener = listener;
+    }
+
 
     private void checkEggsExpiration() {
         for (int i = 0; i < eggs.size(); i++) {

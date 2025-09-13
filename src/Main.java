@@ -6,7 +6,7 @@ import java.awt.event.ActionListener;
 public class Main {
     public static final int GAME_WINDOW_WIDTH= 800;
     public static final int GAME_WINDOW_HEIGHT= 600;
-    public static final int chickensAmount= 5;
+//    public static final int chickensAmount= 5;
 
 
     private static void showInstructions(){
@@ -31,6 +31,10 @@ public class Main {
         JOptionPane.showMessageDialog(null, instructions, "Game Instructions", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    public static void startGame (){
+
+    }
+
     public static void main(String[]args){
 
         ActionListener instructionsAction = new ActionListener() {
@@ -51,31 +55,29 @@ public class Main {
 
         gameWindow.setTitle("gameName");
 
-        MenuPanel menuPanel = new MenuPanel(0, 0, GAME_WINDOW_WIDTH / 8, GAME_WINDOW_HEIGHT, instructionsAction);
+        MenuPanel menuPanel = new MenuPanel(0, 0, GAME_WINDOW_WIDTH / 8, GAME_WINDOW_HEIGHT,GAME_WINDOW_WIDTH,GAME_WINDOW_HEIGHT, instructionsAction);
         gameWindow.add(menuPanel);
 
         MovementListener movementListener = new MovementListener(null);
 
-        ScenePanel scenePanel = new ScenePanel
-                (
-                menuPanel.getWidth(),
-                        0,
-                        gameWindow.getWidth()-menuPanel.getWidth(),
-                        GAME_WINDOW_HEIGHT,
-                        chickensAmount,
-                        movementListener
-                        );
+//        ScenePanel scenePanel = new ScenePanel
+//                (
+//                menuPanel.getWidth(),
+//                        0,
+//                        gameWindow.getWidth()-menuPanel.getWidth(),
+//                        GAME_WINDOW_HEIGHT,
+//                        chickensAmount,
+//                        movementListener,
+//                        false
+//                        );
 
         gameWindow.addKeyListener(movementListener);
 
 
-        gameWindow.add(scenePanel);
+        gameWindow.add(menuPanel.getScenePanel());
         gameWindow.setVisible(true);
         gameWindow.requestFocusInWindow();
 
-
-
-
-
     }
+
 }

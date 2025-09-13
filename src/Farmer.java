@@ -62,27 +62,22 @@ public class Farmer {
         return alive;
     }
 
-    public void moveRight () {
-        if (this.x < this.scenePanel.getWidth() - SIZE) {
-            this.x+=this.speed;
-        }
+    public void moveRight() {
+        this.x = Math.min(this.x + speed, scenePanel.getWidth() - SIZE);
     }
 
-    public void moveLeft () {
-        if (this.x > 0) {
-            this.x-=this.speed;
-        }
+    public void moveLeft() {
+        this.x = Math.max(this.x - speed, 0);
     }
 
-    public void moveUp () {
-        if (this.y > 0) {
-            this.y-=this.speed;
-        }
+    public void moveUp() {
+        this.y = Math.max(this.y - speed, 0);
     }
 
-    public void moveDown () {
-        this.y+=this.speed;
+    public void moveDown() {
+        this.y = Math.min(this.y + speed, scenePanel.getHeight() - SIZE);
     }
+
 
     public int getX() {
         return x;
