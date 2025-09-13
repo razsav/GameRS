@@ -7,7 +7,7 @@ public class Egg {
     private int x, y;
 
     private long creationTime;
-    private long lifeTime = 60_000;
+    private long lifeTime = 30_000;
 
 
     public Egg (int x, int y){

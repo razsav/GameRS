@@ -48,11 +48,6 @@ public class Farmer {
     }
 
 
-//    public void paint (Graphics graphics) {
-//        graphics.setColor(Color.BLUE);
-//        graphics.fillOval(this.x, this.y, SIZE/2, SIZE);
-//    }
-
 
     public void die () {
         this.alive = false;

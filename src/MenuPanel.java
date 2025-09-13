@@ -55,6 +55,10 @@ public class MenuPanel extends JPanel {
         instructionButton.addActionListener(instructionsListener);
         playButton.addActionListener(e -> scenePanel.setPlay());
         restartButton.addActionListener(e -> scenePanel.startNewGame());
+        stopButton.addActionListener(e -> scenePanel.stopGame());
+        pauseButton.addActionListener(e-> scenePanel.puseGame());
+        continueButton.addActionListener(e-> scenePanel.continueGame());
+
 
         internalMainMenuPanel.add(playButton);
         internalMainMenuPanel.add(stopButton);
@@ -85,12 +89,6 @@ public class MenuPanel extends JPanel {
         }
     };
 
-//    ActionListener startGame = new ActionListener() {
-//        @Override
-//        public void actionPerformed(ActionEvent e) {
-//            ;
-//        }
-//    };
     public ScenePanel getScenePanel(){
         return this.scenePanel;
     }

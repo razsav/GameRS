@@ -13,13 +13,15 @@ public class ScenePanel extends JPanel {
     private BlackChicken blackChicken;
     private Random random = new Random();
     private int width, height;
-    private boolean stop = false;
+
     private Farmer farmer;
     private MovementListener movementListener;
     private int eggsColected=0;
     private int brokenEggs = 0;
     private int eggCollectedDeatenation = 5;
     private boolean play= false;
+    private boolean stop = false;
+    private boolean puse = false;
 
 
 
@@ -37,31 +39,24 @@ public class ScenePanel extends JPanel {
         if (play ){
             startNewGame();
         }
-//        this.farmer = new Farmer(this);
 
-//        if (this.farmer.isAlive() && play == true){
-//            for (int i=0; i< this.chickens.length; i++){
-//                this.chickens[i] = new Chicken(random.nextInt(width-chicken.SIZE/2), random.nextInt(height-chicken.SIZE));
-//            }
-//
-//
-//            this.eggs.add(new Egg(random.nextInt(width-Egg.SIZE/2), random.nextInt(height-Egg.SIZE)));
-////        for (int i=0; i< this.chickens.length; i++){
-////            this.eggs.add(new Egg(random.nextInt(width-Egg.SIZE/2), random.nextInt(height-Egg.SIZE)));
-////        }
-//
-//            this.farmer = new Farmer(this);
-//
-//
-//            this.stop = false;
-//            this.movementListener = listener;
-//            this.mainGameLoop();
-//        }
+    }
+    public void puseGame(){
+        this.puse= true;
+    }
+
+    public void continueGame(){
+        this.puse=false;
+    }
+
+    public void stopGame(){
+        this.stop = true;
     }
 
     public void startNewGame (){
         this.play = true;
         this.stop = false;
+        this.puse= false;
 
         this.farmer= new Farmer(this);
         this.farmer.Alive();
@@ -96,7 +91,10 @@ public class ScenePanel extends JPanel {
     }
 
     public void setPlay () {
-        startNewGame();
+        if (!play){
+            startNewGame();
+        }
+
     }
 
     private Thread gameThread;
@@ -115,30 +113,34 @@ public class ScenePanel extends JPanel {
             }
 
 
-            while (play && farmer.isAlive()) {
-                for (Chicken chicken : this.chickens) {
-                    chicken.move(width, height);
-                }
-                this.blackChicken.move(width, height);
+            while (play && farmer.isAlive() && !stop) {
 
-                this.checkCollisions();
-                this.checkEggsExpiration();
+                if (!puse){
+                    for (Chicken chicken : this.chickens) {
+                        chicken.move(width, height);
+                    }
+                    this.blackChicken.move(width, height);
+
+                    this.checkCollisions();
+                    this.checkEggsExpiration();
+
+
+                    // תנועת החוואי
+                    if (movementListener.isRight()) {
+                        this.getFarmer().moveRight();
+                    }
+                    if (movementListener.isLeft()) {
+                        this.getFarmer().moveLeft();
+                    }
+                    if (movementListener.isUp()) {
+                        this.getFarmer().moveUp();
+                    }
+                    if (movementListener.isDown()) {
+                        this.getFarmer().moveDown();
+                    }
+                }
+
                 repaint();
-
-                // תנועת החוואי
-                if (movementListener.isRight()) {
-                    this.getFarmer().moveRight();
-                }
-                if (movementListener.isLeft()) {
-                    this.getFarmer().moveLeft();
-                }
-                if (movementListener.isUp()) {
-                    this.getFarmer().moveUp();
-                }
-                if (movementListener.isDown()) {
-                    this.getFarmer().moveDown();
-                }
-
 
                 try {
                     Thread.sleep(100);
@@ -174,6 +176,15 @@ public class ScenePanel extends JPanel {
     }
 
     public void paintComponent ( Graphics graphics) {
+        super.paintComponent(graphics);
+
+        if (puse){
+            graphics.setColor(Color.RED);
+            graphics.setFont(new Font("Arial", Font.BOLD, 30));
+            graphics.drawString("Game puse", width/8+120, height/2-30);
+            graphics.drawString("press 'Continue' to continue the game", width/8, height/2);
+            return;
+        }
 
         if (!play){
             graphics.setColor(Color.BLACK);
@@ -181,7 +192,9 @@ public class ScenePanel extends JPanel {
             graphics.drawString( "Press 'Play' to start", width/4, height/4);
             return;
 
-        } else if (farmer.isAlive()) {
+        }
+
+        if (farmer.isAlive()) {
             super.paintComponent(graphics);
             for (Chicken chicken: this.chickens){ chicken.paint(graphics); }
             for (Egg egg : this.eggs){
@@ -202,13 +215,12 @@ public class ScenePanel extends JPanel {
             graphics.drawString(scoreText, 10, 20); // צייר את הטקסט במיקום (x, y) מסוים
             graphics.drawString("Broken Eggs: " + brokenEggs + "/5", 10, 50); // מופיע מתחת לסופר
 
-        } else{
+        } else {
             graphics.setColor(Color.RED);
             graphics.setFont(new Font("Arial", Font.BOLD, 40));
             graphics.drawString("Game Over", width/4, height/2);
-
-
         }
+
 
     }
 
