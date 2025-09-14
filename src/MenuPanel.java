@@ -9,6 +9,7 @@ public class MenuPanel extends JPanel {
     MovementListener movementListener;
     private JLabel counterEggs;
     private JLabel counterBrokenEggs;
+    private JLabel numberOfBlackChickens;
 
     public MenuPanel (int x, int y, int width, int height, int windowWidth, int windowHeight, ActionListener instructionsListener) {
         this.setBounds(x, y, width, height);
@@ -23,7 +24,7 @@ public class MenuPanel extends JPanel {
 
 
         JPanel internalMainMenuPanel = new JPanel();
-        GridLayout gridLayout = new GridLayout(9, 1); //מסדר את החלקוה לכפתורים ואיך יהיו מסודרים
+        GridLayout gridLayout = new GridLayout(12, 1); //מסדר את החלקוה לכפתורים ואיך יהיו מסודרים
         internalMainMenuPanel.setLayout(gridLayout);
         internalMainMenuPanel.setBounds(0,0, width, height/4);
 
@@ -54,6 +55,8 @@ public class MenuPanel extends JPanel {
         JButton restartButton = new JButton("Restart");
         JButton pauseButton = new JButton("Pause");
         JButton continueButton = new JButton("Continue");
+        JButton moreBlackChickenButton = new JButton("^");
+        JButton lessBlackChickenButton = new JButton("v");
 
         instructionButton.addActionListener(instructionsListener);
         playButton.addActionListener(e -> scenePanel.setPlay());
@@ -70,7 +73,7 @@ public class MenuPanel extends JPanel {
         internalMainMenuPanel.add(restartButton);
         internalMainMenuPanel.add(instructionButton);
 
-        counterEggs = new JLabel("Eggs: 0");
+        counterEggs = new JLabel("Eggs: 0/" + scenePanel.getEggCollectedDeatenation());
         counterEggs.setFont(new Font("Arial", Font.BOLD, 10));
         counterEggs.setForeground(Color.BLACK);
         internalMainMenuPanel.add(counterEggs);
@@ -80,15 +83,24 @@ public class MenuPanel extends JPanel {
         counterBrokenEggs.setForeground(Color.BLACK);
         internalMainMenuPanel.add(counterBrokenEggs);
 
+        numberOfBlackChickens = new JLabel("Black Chickens: ");
+        numberOfBlackChickens.setFont(new Font("Arial", Font.BOLD, 10));
+        numberOfBlackChickens.setForeground(Color.BLACK);
 
-        JPanel movementPanel = new JPanel();
-        movementPanel.setBounds(0,height/4, width, height/4);
-        movementPanel.setLayout(gridLayout);
+
+        internalMainMenuPanel.add(moreBlackChickenButton);
+        internalMainMenuPanel.add(numberOfBlackChickens);
+        internalMainMenuPanel.add(lessBlackChickenButton);
+
+
+//        JPanel movementPanel = new JPanel();
+//        movementPanel.setBounds(0,height/4, width, height/4);
+//        movementPanel.setLayout(gridLayout);
 
 
         this.add(internalMainMenuPanel, BorderLayout.NORTH);
 
-        this.add(movementPanel, BorderLayout.SOUTH);
+//        this.add(movementPanel, BorderLayout.SOUTH);
     }
 
     public static void setPlayTrue(ScenePanel scenePanel){
@@ -107,8 +119,8 @@ public class MenuPanel extends JPanel {
     }
 
     // שיטה לעדכון הטקסט
-    public void updateCounterEggs(int eggsCollected) {
-        this.counterEggs.setText("Eggs: " + eggsCollected);
+    public void updateCounterEggs(int eggsCollected, int eggsCollectedDestenation) {
+        this.counterEggs.setText("Eggs: " + eggsCollected + "/" + eggsCollectedDestenation);
     }
 
     public void updateCounterBrokenEggs(int BrokenEggs, int brokenEggsThreshold) {

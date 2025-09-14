@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Random;
 
+//רוב הדברים בתרנגולות ובתרנגולות השחורות מאוד דומים, אולי ניתן להוציא את זה החוצה במקום לכתוב פעמים
 public class Chicken {
     public static final int SIZE = 30;
     private int x, y;

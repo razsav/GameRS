@@ -168,7 +168,7 @@ public class ScenePanel extends JPanel {
             Egg egg = eggs.get(i);
             if (egg.getBounds().intersects(getFarmer().getBounds())){
                 eggsColected++;
-                SwingUtilities.invokeLater(() -> menuPanel.updateCounterEggs(eggsColected));
+                SwingUtilities.invokeLater(() -> menuPanel.updateCounterEggs(eggsColected, eggCollectedDeatenation));
                 eggs.remove(i);
                 int newX = random.nextInt(Math.max(Egg.SIZE*16, width - Egg.SIZE*8));
                 int newY = random.nextInt(Math.max(Egg.SIZE*16, height - Egg.SIZE*8));
@@ -186,7 +186,7 @@ public class ScenePanel extends JPanel {
     public void paintComponent ( Graphics graphics) {
         super.paintComponent(graphics);
 
-        if (puse){
+        if (puse && eggsColected != eggCollectedDeatenation){
             graphics.setColor(Color.RED);
             graphics.setFont(new Font("Arial", Font.BOLD, 30));
             graphics.drawString("Game puse", width/8+120, height/2-30);
@@ -202,7 +202,7 @@ public class ScenePanel extends JPanel {
 
         }
 
-        if (farmer.isAlive()) {
+        if (farmer.isAlive() && eggsColected != eggCollectedDeatenation) {
             super.paintComponent(graphics);
             for (Chicken chicken: this.chickens){ chicken.paint(graphics); }
             for (Egg egg : this.eggs){
@@ -223,10 +223,14 @@ public class ScenePanel extends JPanel {
 //            graphics.drawString(scoreText, 10, 20); // צייר את הטקסט במיקום (x, y) מסוים
 //            graphics.drawString("Broken Eggs: " + brokenEggs + "/" + brokenEggsThreshold, 10, 50); // מופיע מתחת לסופר
 
-        } else {
+        } else if (!farmer.isAlive() && eggsColected != eggCollectedDeatenation) {
             graphics.setColor(Color.RED);
             graphics.setFont(new Font("Arial", Font.BOLD, 40));
             graphics.drawString("Game Over", width/4, height/2);
+        } else {
+            graphics.setColor(Color.YELLOW);
+            graphics.setFont(new Font("Arial", Font.BOLD, 40));
+            graphics.drawString("You WIN", width/4, height/2);
         }
 
 
@@ -246,6 +250,10 @@ public class ScenePanel extends JPanel {
 
     public void setMovementListener(MovementListener listener) {
         this.movementListener = listener;
+    }
+
+    public int getEggCollectedDeatenation(){
+        return eggCollectedDeatenation;
     }
 
 
