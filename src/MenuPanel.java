@@ -1,12 +1,30 @@
+/**
+ * MenuPanel - Game menu interface panel.
+ * Contains buttons to control the game: play, stop, pause, continue, restart.
+ * Allows adjustment of black chickens number and shows game instructions.
+ * Displays counters for collected eggs, broken eggs, and black chickens.
+ */
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class MenuPanel extends JPanel {
+
+    /**
+     * Constructor - initializes menu buttons, counters, and linked ScenePanel.
+     * @param x X position of panel
+     * @param y Y position of panel
+     * @param width Width of panel
+     * @param height Height of panel
+     * @param windowWidth Full game window width
+     * @param windowHeight Full game window height
+     */
+
     private ScenePanel scenePanel;
-    int x, y, width, height, windowWidth, windowHeight;
-    MovementListener movementListener;
+    private int x, y, width, height, windowWidth, windowHeight;
+    private MovementListener movementListener;
     private JLabel counterEggs;
     private JLabel counterBrokenEggs;
     private JLabel numberOfBlackChickens;
@@ -24,7 +42,7 @@ public class MenuPanel extends JPanel {
 
 
         JPanel internalMainMenuPanel = new JPanel();
-        GridLayout gridLayout = new GridLayout(12, 1); //מסדר את החלקוה לכפתורים ואיך יהיו מסודרים
+        GridLayout gridLayout = new GridLayout(12, 1);
         internalMainMenuPanel.setLayout(gridLayout);
         internalMainMenuPanel.setBounds(0,0, width, height/4);
 
@@ -37,15 +55,14 @@ public class MenuPanel extends JPanel {
                         false,this
         );
 
-        // עכשיו ליצור MovementListener *עם* ה־ScenePanel
+
         this.movementListener = new MovementListener(this.scenePanel);
 
-// להוסיף את ה־KeyListener לחלון
         this.scenePanel.addKeyListener(this.movementListener);
         this.scenePanel.setFocusable(true);
-        this.scenePanel.requestFocusInWindow(); // 👈 מכריח את ScenePanel לקבל פוקוס
+        this.scenePanel.requestFocusInWindow();
 
-// לשמור את ה־movementListener בתוך ה־ScenePanel
+
         this.scenePanel.setMovementListener(this.movementListener);
 
 
@@ -59,10 +76,9 @@ public class MenuPanel extends JPanel {
         JButton lessBlackChickenButton = new JButton("v");
 
         instructionButton.addActionListener(e -> {
-            // לעצור את המשחק
+
             scenePanel.puseGame();
 
-            // יצירת חלון הוראות חדש
             JDialog instructionsDialog = new JDialog((JFrame) SwingUtilities.getWindowAncestor(this), "Instructions", true);
             instructionsDialog.setSize(400, 300);
             instructionsDialog.setLocationRelativeTo(this);
@@ -95,7 +111,6 @@ public class MenuPanel extends JPanel {
             instructionsText.setLineWrap(true);
             instructionsDialog.add(new JScrollPane(instructionsText));
 
-            // כשנסגר החלון → להמשיך את המשחק ולהחזיר פוקוס
             instructionsDialog.addWindowListener(new java.awt.event.WindowAdapter() {
                 @Override
                 public void windowClosed(java.awt.event.WindowEvent e) {
@@ -172,15 +187,8 @@ public class MenuPanel extends JPanel {
         internalMainMenuPanel.add(numberOfBlackChickens);
         internalMainMenuPanel.add(lessBlackChickenButton);
 
-
-//        JPanel movementPanel = new JPanel();
-//        movementPanel.setBounds(0,height/4, width, height/4);
-//        movementPanel.setLayout(gridLayout);
-
-
         this.add(internalMainMenuPanel, BorderLayout.NORTH);
 
-//        this.add(movementPanel, BorderLayout.SOUTH);
     }
 
     public static void setPlayTrue(ScenePanel scenePanel){
@@ -194,20 +202,34 @@ public class MenuPanel extends JPanel {
         }
     };
 
+    /**
+     * Returns the linked ScenePanel.
+     */
     public ScenePanel getScenePanel(){
         return this.scenePanel;
     }
 
-    // שיטה לעדכון הטקסט
+    /**
+     * Updates the eggs collected counter.
+     * @param eggsCollected Number of eggs collected
+     * @param eggsCollectedDestination Target number of eggs
+     */
     public void updateCounterEggs(int eggsCollected, int eggsCollectedDestenation) {
         this.counterEggs.setText("Eggs: " + eggsCollected + "/" + eggsCollectedDestenation);
     }
 
+    /**
+     * Updates the broken eggs counter.
+     * @param brokenEggs Number of broken eggs
+     * @param brokenEggsThreshold Maximum allowed broken eggs
+     */
     public void updateCounterBrokenEggs(int BrokenEggs, int brokenEggsThreshold) {
         this.counterBrokenEggs.setText("Broken Eggs: " + BrokenEggs + "/" + brokenEggsThreshold);
     }
 
-    // שיטה לעדכון הטקסט
+    /**
+     * Updates the number of black chickens displayed.
+     */
     public void updateNumberOfBlackChickens() {
         this.numberOfBlackChickens.setText("Black Chickens: " + scenePanel.getNumberOfBlackChickens());
     }
