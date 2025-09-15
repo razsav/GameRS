@@ -15,6 +15,9 @@ public class ScenePanel extends JPanel {
     private int numberOfBlackChickens=1;
     private Random random = new Random();
     private int width, height;
+    private static final int MARGIN_TOP = 15; // מספיק מקום לטקסט מעל הביצה
+    private static final int MARGIN_BOTTOM = Egg.SIZE * 2;
+
 
     private Farmer farmer;
     private MovementListener movementListener;
@@ -86,10 +89,16 @@ public class ScenePanel extends JPanel {
 
 
         this.eggs.clear();
-        int marginTop = 15; // מספיק מקום לטקסט מעל הביצה
         int newX = random.nextInt(width - Egg.SIZE + 1);
-        int newY = random.nextInt(marginTop, height - Egg.SIZE); // צריך Java 17+ או לעשות בעצמך
-        eggs.add(new Egg(newX, newY, width, height));
+        int newY = random.nextInt(MARGIN_TOP, height - Egg.SIZE - MARGIN_BOTTOM);
+        eggs.add(new Egg(newX, newY, width, height, this.MARGIN_TOP));
+        if (!eggs.isEmpty()) {
+            System.out.println(
+                    "Last Egg position: x=" + eggs.get(eggs.size() - 1).getX() +
+                            ", y=" + eggs.get(eggs.size() - 1).getY()
+            );
+        }
+
 
 
         this.eggsColected = 0;
@@ -189,10 +198,18 @@ public class ScenePanel extends JPanel {
                 eggsColected++;
                 SwingUtilities.invokeLater(() -> menuPanel.updateCounterEggs(eggsColected, eggCollectedDeatenation));
                 eggs.remove(i);
-                int marginTop = 15; // מספיק מקום לטקסט מעל הביצה
+
                 int newX = random.nextInt(width - Egg.SIZE + 1);
-                int newY = random.nextInt(marginTop, height - Egg.SIZE); // צריך Java 17+ או לעשות בעצמך
-                eggs.add(new Egg(newX, newY, width, height));
+                int newY = random.nextInt(MARGIN_TOP, height - Egg.SIZE - MARGIN_BOTTOM);
+
+                eggs.add(new Egg(newX, newY, width, height, this.MARGIN_TOP));
+                if (!eggs.isEmpty()) {
+                    System.out.println(
+                            "Last Egg position: x=" + eggs.get(eggs.size() - 1).getX() +
+                                    ", y=" + eggs.get(eggs.size() - 1).getY()
+                    );
+                }
+
                 i=0;
 
             }
@@ -334,8 +351,16 @@ public class ScenePanel extends JPanel {
 
                 // יצירת ביצה חדשה
                 int newX = random.nextInt(width - Egg.SIZE + 1);
-                int newY = random.nextInt(height - Egg.SIZE + 1);
-                eggs.add(new Egg(newX, newY, this.width, this.height));
+                int newY = random.nextInt(MARGIN_TOP, height - Egg.SIZE - MARGIN_BOTTOM);
+
+                eggs.add(new Egg(newX, newY, width, height, this.MARGIN_TOP));
+                if (!eggs.isEmpty()) {
+                    System.out.println(
+                            "Last Egg position: x=" + eggs.get(eggs.size() - 1).getX() +
+                                    ", y=" + eggs.get(eggs.size() - 1).getY()
+                    );
+                }
+
 
                 i--; // כדי לא לפספס בדיקה
             }

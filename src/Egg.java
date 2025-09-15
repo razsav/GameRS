@@ -10,11 +10,12 @@ public class Egg {
     private long lifeTime = 30_000;
 
 
-    public Egg (int x, int y, int width, int height){
+    public Egg(int x, int y, int width, int height, int marginTop){
         this.x = Math.max(0, Math.min(x, width - SIZE/2));
-        this.y = Math.max(0, Math.min(y, height - SIZE));
+        this.y = Math.max(marginTop, Math.min(y, height - SIZE));
         this.creationTime = System.currentTimeMillis();
     }
+
 
     public void paint (Graphics graphics) {
         graphics.setColor(Color.WHITE);
