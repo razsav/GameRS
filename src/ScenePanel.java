@@ -86,9 +86,11 @@ public class ScenePanel extends JPanel {
 
 
         this.eggs.clear();
-        int maxEggX = Math.max(1, width - Egg.SIZE);
-        int maxEggY = Math.max(1, height - Egg.SIZE);
-        this.eggs.add(new Egg(random.nextInt(maxEggX), random.nextInt(maxEggY), this.width, this.height));
+        int marginTop = 15; // מספיק מקום לטקסט מעל הביצה
+        int newX = random.nextInt(width - Egg.SIZE + 1);
+        int newY = random.nextInt(marginTop, height - Egg.SIZE); // צריך Java 17+ או לעשות בעצמך
+        eggs.add(new Egg(newX, newY, width, height));
+
 
         this.eggsColected = 0;
         this.brokenEggs = 0;
@@ -187,10 +189,10 @@ public class ScenePanel extends JPanel {
                 eggsColected++;
                 SwingUtilities.invokeLater(() -> menuPanel.updateCounterEggs(eggsColected, eggCollectedDeatenation));
                 eggs.remove(i);
-                int newX = random.nextInt(Math.max(Egg.SIZE*16, width - Egg.SIZE*8));
-                int newY = random.nextInt(Math.max(Egg.SIZE*16, height - Egg.SIZE*8));
-                Egg newEgg = new Egg(newX, newY, this.width, this.height);
-                eggs.add(newEgg);
+                int marginTop = 15; // מספיק מקום לטקסט מעל הביצה
+                int newX = random.nextInt(width - Egg.SIZE + 1);
+                int newY = random.nextInt(marginTop, height - Egg.SIZE); // צריך Java 17+ או לעשות בעצמך
+                eggs.add(new Egg(newX, newY, width, height));
                 i=0;
 
             }
@@ -239,7 +241,27 @@ public class ScenePanel extends JPanel {
                 graphics.setColor(Color.BLACK);
                 graphics.setFont(new Font("Arial", Font.PLAIN, 12));
                 int secondsLeft = egg.getSecondsLeft();
-                graphics.drawString(secondsLeft + "s", egg.getX(), egg.getY() - 5);
+//                graphics.drawString(secondsLeft + "s", egg.getX(), egg.getY() - 5);
+                int textX = egg.getX();
+                int textY = egg.getY() - 5; // ברירת מחדל מעל הביצה
+
+                FontMetrics fm = graphics.getFontMetrics();
+                int textWidth = fm.stringWidth(secondsLeft + "s");
+                int textHeight = fm.getHeight();
+
+// בדיקה אם הטקסט יוצא מעל גבול עליון
+                if (textY < textHeight) {
+                    textY = egg.getY() + Egg.SIZE + textHeight / 2; // מצייר מתחת לביצה
+                }
+
+// בדיקה אם הטקסט יוצא מהצד הימני
+                if (textX + textWidth > this.width) {
+                    textX = this.width - textWidth - 2; // מעט מרחק מהגבול
+                }
+
+                graphics.drawString(secondsLeft + "s", textX, textY);
+
+
             }
 
             this.farmer.paint(graphics);
