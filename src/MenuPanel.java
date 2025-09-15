@@ -11,7 +11,7 @@ public class MenuPanel extends JPanel {
     private JLabel counterBrokenEggs;
     private JLabel numberOfBlackChickens;
 
-    public MenuPanel (int x, int y, int width, int height, int windowWidth, int windowHeight, ActionListener instructionsListener) {
+    public MenuPanel (int x, int y, int width, int height, int windowWidth, int windowHeight) {
         this.setBounds(x, y, width, height);
         this.setLayout(null);
         this.x=x;
@@ -58,12 +58,92 @@ public class MenuPanel extends JPanel {
         JButton moreBlackChickenButton = new JButton("^");
         JButton lessBlackChickenButton = new JButton("v");
 
-        instructionButton.addActionListener(instructionsListener);
-        playButton.addActionListener(e -> scenePanel.setPlay());
-        restartButton.addActionListener(e -> scenePanel.startNewGame());
-        stopButton.addActionListener(e -> scenePanel.stopGame());
-        pauseButton.addActionListener(e-> scenePanel.puseGame());
-        continueButton.addActionListener(e-> scenePanel.continueGame());
+        instructionButton.addActionListener(e -> {
+            // לעצור את המשחק
+            scenePanel.puseGame();
+
+            // יצירת חלון הוראות חדש
+            JDialog instructionsDialog = new JDialog((JFrame) SwingUtilities.getWindowAncestor(this), "Instructions", true);
+            instructionsDialog.setSize(400, 300);
+            instructionsDialog.setLocationRelativeTo(this);
+
+            JTextArea instructionsText = new JTextArea(
+                    "Farmer vs Chickens – Game Instructions\n\n" +
+                            "Objective:\n" +
+                            "Control the farmer, collect eggs, and avoid black chickens.\n" +
+                            "The game ends if you collide with a black chicken, break too many eggs, or achieve the win condition.\n\n" +
+
+                            "Controls:\n" +
+                            "- Arrow Keys: Move the farmer (Up, Down, Left, Right).\n" +
+                            "- Avoid black chickens – colliding with them will end the game.\n" +
+                            "- Collect eggs carefully – breaking eggs will count against you.\n\n" +
+
+                            "Game Rules:\n" +
+                            "- If you win, collide with a black chicken, or break too many eggs, the game stops.\n" +
+                            "- To start a new game, press the 'Restart' button.\n" +
+                            "- To adjust the number of black chickens:\n" +
+                            "    1. Use the arrow buttons next to the black chicken counter.\n" +
+                            "    2. Press 'Restart' to apply the new number.\n\n" +
+
+                            "Tips:\n" +
+                            "- Stay away from black chickens.\n" +
+                            "- Avoid breaking eggs — too many broken eggs will cause you to lose.\n" +
+                            "- Use your speed wisely to collect as many eggs as possible."
+            );
+            instructionsText.setEditable(false);
+            instructionsText.setWrapStyleWord(true);
+            instructionsText.setLineWrap(true);
+            instructionsDialog.add(new JScrollPane(instructionsText));
+
+            // כשנסגר החלון → להמשיך את המשחק ולהחזיר פוקוס
+            instructionsDialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                @Override
+                public void windowClosed(java.awt.event.WindowEvent e) {
+                    scenePanel.continueGame();
+                    scenePanel.requestFocusInWindow();
+                }
+
+                @Override
+                public void windowClosing(java.awt.event.WindowEvent e) {
+                    scenePanel.continueGame();
+                    scenePanel.requestFocusInWindow();
+                }
+            });
+
+            instructionsDialog.setVisible(true);
+        });
+
+        playButton.addActionListener(e -> {
+            scenePanel.setPlay();
+            this.scenePanel.requestFocusInWindow();
+        });
+        restartButton.addActionListener(e -> {
+            scenePanel.startNewGame();
+            this.scenePanel.requestFocusInWindow();
+        });
+        stopButton.addActionListener(e -> {
+            scenePanel.stopGame();
+            this.scenePanel.requestFocusInWindow();
+        });
+        pauseButton.addActionListener(e-> {
+            scenePanel.puseGame();
+            this.scenePanel.requestFocusInWindow();
+        });
+        continueButton.addActionListener(e-> {
+            scenePanel.continueGame();
+            this.scenePanel.requestFocusInWindow();
+        });
+
+        moreBlackChickenButton.addActionListener(e-> {
+            scenePanel.increaseNumberOfBlackChickens();
+            scenePanel.requestFocusInWindow();
+
+        });
+
+        lessBlackChickenButton.addActionListener(e-> {
+            scenePanel.decreaseNumberOfBlackChickens();
+            scenePanel.requestFocusInWindow();
+        });
 
 
         internalMainMenuPanel.add(playButton);
@@ -83,7 +163,7 @@ public class MenuPanel extends JPanel {
         counterBrokenEggs.setForeground(Color.BLACK);
         internalMainMenuPanel.add(counterBrokenEggs);
 
-        numberOfBlackChickens = new JLabel("Black Chickens: ");
+        numberOfBlackChickens = new JLabel("Black Chickens: " + scenePanel.getNumberOfBlackChickens());
         numberOfBlackChickens.setFont(new Font("Arial", Font.BOLD, 10));
         numberOfBlackChickens.setForeground(Color.BLACK);
 
@@ -125,6 +205,11 @@ public class MenuPanel extends JPanel {
 
     public void updateCounterBrokenEggs(int BrokenEggs, int brokenEggsThreshold) {
         this.counterBrokenEggs.setText("Broken Eggs: " + BrokenEggs + "/" + brokenEggsThreshold);
+    }
+
+    // שיטה לעדכון הטקסט
+    public void updateNumberOfBlackChickens() {
+        this.numberOfBlackChickens.setText("Black Chickens: " + scenePanel.getNumberOfBlackChickens());
     }
 
 

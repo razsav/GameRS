@@ -10,9 +10,9 @@ public class Egg {
     private long lifeTime = 30_000;
 
 
-    public Egg (int x, int y){
-        this.x=x;
-        this.y=y;
+    public Egg (int x, int y, int width, int height){
+        this.x = Math.max(0, Math.min(x, width - SIZE/2));
+        this.y = Math.max(0, Math.min(y, height - SIZE));
         this.creationTime = System.currentTimeMillis();
     }
 

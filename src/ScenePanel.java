@@ -10,7 +10,9 @@ public class ScenePanel extends JPanel {
 
     private Chicken[] chickens;
     private ArrayList<Egg> eggs = new ArrayList<Egg>();
-    private BlackChicken blackChicken;
+    private ArrayList<BlackChicken> blackChickens = new ArrayList<BlackChicken>();
+//    private BlackChicken blackChicken;
+    private int numberOfBlackChickens=1;
     private Random random = new Random();
     private int width, height;
 
@@ -37,7 +39,7 @@ public class ScenePanel extends JPanel {
         this.setLayout(null);
         this.setBackground(Color.GREEN);
         this.chickens = new Chicken[5];
-        this.blackChicken = new BlackChicken(random.nextInt(width-blackChicken.SIZE/2), random.nextInt(height-blackChicken.SIZE));
+        //this.blackChicken = new BlackChicken(random.nextInt(width-blackChicken.SIZE/2), random.nextInt(height-blackChicken.SIZE));
 
         if (play ){
             startNewGame();
@@ -71,17 +73,28 @@ public class ScenePanel extends JPanel {
             this.chickens[i] = new Chicken(random.nextInt(maxX), random.nextInt(maxY));
         }
 
+//        int maxBlackX = Math.max(1, width - BlackChicken.SIZE);
+//        int maxBlackY = Math.max(1, height - BlackChicken.SIZE);
+//        this.blackChicken = new BlackChicken(random.nextInt(maxBlackX), random.nextInt(maxBlackY));
+
+        this.blackChickens.clear();
         int maxBlackX = Math.max(1, width - BlackChicken.SIZE);
         int maxBlackY = Math.max(1, height - BlackChicken.SIZE);
-        this.blackChicken = new BlackChicken(random.nextInt(maxBlackX), random.nextInt(maxBlackY));
+        for(int i=0; i< numberOfBlackChickens; i++){
+            this.blackChickens.add(new BlackChicken(random.nextInt(maxBlackX), random.nextInt(maxBlackY)));
+        }
+
 
         this.eggs.clear();
         int maxEggX = Math.max(1, width - Egg.SIZE);
         int maxEggY = Math.max(1, height - Egg.SIZE);
-        this.eggs.add(new Egg(random.nextInt(maxEggX), random.nextInt(maxEggY)));
+        this.eggs.add(new Egg(random.nextInt(maxEggX), random.nextInt(maxEggY), this.width, this.height));
 
         this.eggsColected = 0;
         this.brokenEggs = 0;
+        SwingUtilities.invokeLater(() -> menuPanel.updateCounterBrokenEggs(this.brokenEggs, this.brokenEggsThreshold));
+        SwingUtilities.invokeLater(() -> menuPanel.updateCounterEggs(eggsColected, eggCollectedDeatenation));
+
 
         mainGameLoop();
         repaint();
@@ -119,7 +132,11 @@ public class ScenePanel extends JPanel {
                     for (Chicken chicken : this.chickens) {
                         chicken.move(width, height);
                     }
-                    this.blackChicken.move(width, height);
+
+                    for (BlackChicken blackChicken : this.blackChickens) {
+                        blackChicken.move(width, height);
+                    }
+//                    this.blackChicken.move(width, height);
 
                     this.checkBrokenEggsThreshold();
                     this.checkCollisions();
@@ -172,15 +189,26 @@ public class ScenePanel extends JPanel {
                 eggs.remove(i);
                 int newX = random.nextInt(Math.max(Egg.SIZE*16, width - Egg.SIZE*8));
                 int newY = random.nextInt(Math.max(Egg.SIZE*16, height - Egg.SIZE*8));
-                Egg newEgg = new Egg(newX, newY);
+                Egg newEgg = new Egg(newX, newY, this.width, this.height);
                 eggs.add(newEgg);
                 i=0;
 
             }
         }
-        if (blackChicken.getBounds().intersects(getFarmer().getBounds())){
-            this.farmer.die();
+
+        for (int i=0; i< blackChickens.size(); i++){
+            BlackChicken blackChicken = blackChickens.get(i);
+            if (blackChicken.getBounds().intersects(getFarmer().getBounds())){
+                this.farmer.die();
+
+            }
         }
+
+
+
+//        if (blackChicken.getBounds().intersects(getFarmer().getBounds())){
+//            this.farmer.die();
+//        }
     }
 
     public void paintComponent ( Graphics graphics) {
@@ -215,7 +243,11 @@ public class ScenePanel extends JPanel {
             }
 
             this.farmer.paint(graphics);
-            this.blackChicken.paint(graphics);
+
+            for (BlackChicken blackChicken : this.blackChickens){
+                blackChicken.paint(graphics);
+            }
+//            this.blackChicken.paint(graphics);
 
 //            graphics.setColor(Color.WHITE); // בחר צבע מתאים לטקסט
 //            graphics.setFont(new Font("Arial", Font.BOLD, 20)); // הגדר גופן וגודל
@@ -256,6 +288,19 @@ public class ScenePanel extends JPanel {
         return eggCollectedDeatenation;
     }
 
+    public int getNumberOfBlackChickens() {
+        return numberOfBlackChickens;
+    }
+
+    public void increaseNumberOfBlackChickens() {
+        this.numberOfBlackChickens++;
+        SwingUtilities.invokeLater(() -> menuPanel.updateNumberOfBlackChickens());
+    }
+
+    public void decreaseNumberOfBlackChickens() {
+        this.numberOfBlackChickens--;
+        SwingUtilities.invokeLater(() -> menuPanel.updateNumberOfBlackChickens());
+    }
 
     private void checkEggsExpiration() {
         for (int i = 0; i < eggs.size(); i++) {
@@ -268,7 +313,7 @@ public class ScenePanel extends JPanel {
                 // יצירת ביצה חדשה
                 int newX = random.nextInt(width - Egg.SIZE + 1);
                 int newY = random.nextInt(height - Egg.SIZE + 1);
-                eggs.add(new Egg(newX, newY));
+                eggs.add(new Egg(newX, newY, this.width, this.height));
 
                 i--; // כדי לא לפספס בדיקה
             }

@@ -3,15 +3,21 @@ import java.util.Random;
 
 public class BlackChicken {
     public static final int SIZE = 30;
+    public static final int BOUNDING_WIDTH = SIZE / 2;  // 15
+    public static final int BOUNDING_HEIGHT = SIZE;     // 30
     private int x, y;
     private int direction = -1;
+    private Random random = new Random();
 
 
 
     public BlackChicken(int width, int height){
-        Random random = new Random();
-        this.x = random.nextInt(width - SIZE + 1);
-        this.y = random.nextInt(height - SIZE + 1);
+
+        int maxX = Math.max(1, width - SIZE/2);
+        int maxY = Math.max(1, height - SIZE);
+
+        this.x = random.nextInt(maxX);
+        this.y = random.nextInt(maxY);
         this.direction = random.nextInt(8);
     }
 
@@ -85,8 +91,9 @@ public class BlackChicken {
         // בדיקות גבולות
         if (this.x < 0) this.x = 0;
         if (this.y < 0) this.y = 0;
-        if (this.x > width - SIZE/2) this.x = width - SIZE/2;
-        if (this.y > height - SIZE) this.y = height - SIZE;
+        if (this.x > width - BOUNDING_WIDTH) this.x = width - BOUNDING_WIDTH;
+        if (this.y > height - BOUNDING_HEIGHT) this.y = height - BOUNDING_HEIGHT;
+
 
         // אם נתקעה בקיר, שנה כיוון
         if (this.x == 0 || this.y == 0 || this.x == width - SIZE || this.y == height - SIZE) {
@@ -119,7 +126,7 @@ public class BlackChicken {
     }
 
     public Rectangle getBounds() {
-        return new Rectangle(x, y, SIZE, SIZE);
+        return new Rectangle(x, y, BOUNDING_WIDTH, BOUNDING_HEIGHT);
     }
 
 }

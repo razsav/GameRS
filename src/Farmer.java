@@ -2,6 +2,8 @@ import java.awt.*;
 
 public class Farmer {
     public static final int SIZE = 30;
+    public static final int BOUNDING_WIDTH = SIZE; // הרוחב בפועל
+    public static final int BOUNDING_HEIGHT = 50; // הגובה בפועל (ראש+גוף+רגליים+כובע)
     private int x, y;
     private ScenePanel scenePanel;
     private boolean alive;
@@ -58,7 +60,7 @@ public class Farmer {
     }
 
     public void moveRight() {
-        this.x = Math.min(this.x + speed, scenePanel.getWidth() - SIZE);
+        this.x = Math.min(this.x + speed, scenePanel.getWidth() - BOUNDING_WIDTH);
     }
 
     public void moveLeft() {
@@ -70,7 +72,7 @@ public class Farmer {
     }
 
     public void moveDown() {
-        this.y = Math.min(this.y + speed, scenePanel.getHeight() - SIZE);
+        this.y = Math.min(this.y + speed, scenePanel.getHeight() - BOUNDING_HEIGHT);
     }
 
 
@@ -88,7 +90,7 @@ public class Farmer {
 
 
     public Rectangle getBounds() {
-        return new Rectangle(x, y, SIZE, SIZE);
+        return new Rectangle(x, y, BOUNDING_WIDTH, BOUNDING_HEIGHT);
     }
 
 
