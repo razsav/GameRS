@@ -1,18 +1,31 @@
-import javax.swing.*;
+/**
+ * Chicken - Represents a white chicken in the game.
+ * Handles drawing, movement, and position logic.
+ */
+
 import java.awt.*;
 import java.util.Random;
 
 //רוב הדברים בתרנגולות ובתרנגולות השחורות מאוד דומים, אולי ניתן להוציא את זה החוצה במקום לכתוב פעמים
 public class Chicken {
+    /** Chicken display size (ellipse height). */
     public static final int SIZE = 30;
-    public static final int BOUNDING_WIDTH = SIZE / 2;  // 15
+
+    /** Bounding box width for collisions. */
+    public static final int BOUNDING_WIDTH = SIZE / 2;
+
+    /** Bounding box height for collisions. */
     public static final int BOUNDING_HEIGHT = SIZE;     // 30
     private int x, y;
     private int direction = -1;
     private Random random = new Random();
 
 
-
+    /**
+     * Constructor - spawns chicken at random position and direction.
+     * @param width Panel width
+     * @param height Panel height
+     */
     public Chicken(int width, int height){
 
         int maxX = Math.max(1, width - SIZE/2);
@@ -23,6 +36,10 @@ public class Chicken {
         this.direction = random.nextInt(8);
     }
 
+
+    /**
+     * Draws the chicken (body, feathers, beak).
+     */
     public void paint (Graphics graphics) {
         graphics.setColor(Color.WHITE);
         graphics.fillOval(this.x, this.y, SIZE/2, SIZE);
@@ -32,6 +49,9 @@ public class Chicken {
         drawTriangle(graphics, this.x-2, this.y+6,SIZE/6, Color.YELLOW, Color.YELLOW);
     }
 
+    /**
+     * Helper method to draw a triangle (used for feathers/beak).
+     */
     public void drawTriangle(Graphics g, int x, int y, int size, Color color, Color color2) {
         Graphics2D g2 = (Graphics2D) g;
 
@@ -55,6 +75,10 @@ public class Chicken {
     }
 
 
+    /**
+     * Moves the chicken in its current direction,
+     * bounces off panel borders and changes direction randomly.
+     */
     public void move(int width, int height) {
         int oldX = this.x;
         int oldY = this.y;
@@ -90,14 +114,13 @@ public class Chicken {
                 break;
         }
 
-        // בדיקות גבולות
+
         if (this.x < 0) this.x = 0;
         if (this.y < 0) this.y = 0;
         if (this.x > width - BOUNDING_WIDTH) this.x = width - BOUNDING_WIDTH;
         if (this.y > height - BOUNDING_HEIGHT) this.y = height - BOUNDING_HEIGHT;
 
 
-        // אם נתקעה בקיר, שנה כיוון
         if (this.x == 0 || this.y == 0 || this.x == width - SIZE/2 || this.y == height - SIZE) {
             this.direction = new Random().nextInt(8);
         }

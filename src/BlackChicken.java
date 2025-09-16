@@ -1,16 +1,30 @@
+/**
+ * BlackChicken - Represents a hostile black chicken in the game.
+ * Moves randomly and can collide with the Farmer to cause defeat.
+ */
+
 import java.awt.*;
 import java.util.Random;
 
 public class BlackChicken {
+
+    /** Chicken display size (ellipse height). */
     public static final int SIZE = 30;
-    public static final int BOUNDING_WIDTH = SIZE / 2;  // 15
-    public static final int BOUNDING_HEIGHT = SIZE;     // 30
+
+    /** Bounding box width for collisions. */
+    public static final int BOUNDING_WIDTH = SIZE / 2;
+
+    /** Bounding box height for collisions. */
+    public static final int BOUNDING_HEIGHT = SIZE;
     private int x, y;
     private int direction = -1;
     private Random random = new Random();
 
-
-
+    /**
+     * Constructor - spawns black chicken at random position and direction.
+     * @param width Panel width
+     * @param height Panel height
+     */
     public BlackChicken(int width, int height){
 
         int maxX = Math.max(1, width - SIZE/2);
@@ -21,6 +35,9 @@ public class BlackChicken {
         this.direction = random.nextInt(8);
     }
 
+    /**
+     * Draws the black chicken (body, feathers, beak).
+     */
     public void paint (Graphics graphics) {
         graphics.setColor(Color.BLACK);
         graphics.fillOval(this.x, this.y, SIZE/2, SIZE);
@@ -30,29 +47,35 @@ public class BlackChicken {
         drawTriangle(graphics, this.x-2, this.y+6,SIZE/6, Color.YELLOW, Color.YELLOW);
     }
 
+    /**
+     * Helper method to draw a triangle (used for feathers/beak).
+     */
     public void drawTriangle(Graphics g, int x, int y, int size, Color color, Color color2) {
         Graphics2D g2 = (Graphics2D) g;
 
-        // קואורדינטות של שלושת הקודקודים
         int[] xPoints = {
-                x,               // הקודקוד העליון
-                x - size / 2,    // שמאל למטה
-                x + size / 2     // ימין למטה
+                x,
+                x - size / 2,
+                x + size / 2
         };
         int[] yPoints = {
-                y,               // הקודקוד העליון
-                y + size,        // שמאל למטה
-                y + size         // ימין למטה
+                y,
+                y + size,
+                y + size
         };
 
         g2.setColor(color);
-        g2.fillPolygon(xPoints, yPoints, 3); // צובע את המשולש
+        g2.fillPolygon(xPoints, yPoints, 3);
 
         g2.setColor(color2);
-        g2.drawPolygon(xPoints, yPoints, 3); // מצייר קווי מתאר
+        g2.drawPolygon(xPoints, yPoints, 3);
     }
 
 
+    /**
+     * Moves the black chicken in its current direction,
+     * bounces off panel borders and changes direction randomly.
+     */
     public void move(int width, int height) {
         int oldX = this.x;
         int oldY = this.y;
@@ -118,13 +141,9 @@ public class BlackChicken {
         this.y = y;
     }
 
-    public boolean checkIfCanMove (int width, int height){
-        if(this.y > 0 && this.x > 0 && this.x < width && this.y < height){
-            return true;
-        }
-        return false;
-    }
-
+    /**
+     * Returns bounding rectangle used for collision detection.
+     */
     public Rectangle getBounds() {
         return new Rectangle(x, y, BOUNDING_WIDTH, BOUNDING_HEIGHT);
     }
